@@ -1,0 +1,94 @@
+// File: pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>birthday-calendar</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+// File: src/main/java/com/example/BirthdayCalendar.java
+package com.example;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+
+public class BirthdayCalendar {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        System.out.println("Enter your date of birth (DD/MM/YYYY):");
+        String input = scanner.nextLine();
+
+        try {
+            LocalDate dob = LocalDate.parse(input, formatter);
+            DayOfWeek dayOfWeek = dob.getDayOfWeek();
+            System.out.println("You were born on a " + dayOfWeek);
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Please use DD/MM/YYYY.");
+        }
+
+        scanner.close();
+    }
+}
+
+// File: src/test/java/com/example/BirthdayCalendarTest.java
+package com.example;
+
+import org.junit.jupiter.api.Test;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class BirthdayCalendarTest {
+    @Test
+    public void testValidInput() {
+        String input = "01/01/2000\n";
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        System.setIn(inputStream);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        BirthdayCalendar.main(new String[]{});
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("You were born on a SATURDAY"));
+    }
+}
